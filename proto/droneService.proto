@@ -30,6 +30,7 @@ message Movement {
         figure8 = 7;
         circle = 8;
         zigzag = 9;
+        landing = 10;
     }
 }
 
