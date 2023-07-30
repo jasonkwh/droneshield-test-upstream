@@ -1,0 +1,40 @@
+syntax = "proto3";
+package drone;
+
+option go_package = "./dronev1";
+
+import "google/protobuf/timestamp.proto";
+
+service DroneService {
+    rpc Movement(MovementRequest) returns (MovementResponse);
+}
+
+message MovementRequest {
+    Movement.Enum movement = 1;
+}
+
+message MovementResponse {
+    Coordinate coordinate = 1;
+    google.protobuf.Timestamp time = 2;
+}
+
+message Movement {
+    enum Enum {
+        takeoff = 0;
+        up = 1;
+        down = 2;
+        right = 3;
+        left = 4;
+        forward = 5;
+        backward = 6;
+        figure8 = 7;
+        circle = 8;
+        zigzag = 9;
+    }
+}
+
+message Coordinate {
+    float latitude = 1;
+    float longitude = 2;
+    float altitude = 3;
+}
