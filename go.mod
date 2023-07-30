@@ -1,4 +1,4 @@
-module droneshield-test-proto
+module github.com/jasonkwh/droneshield-test-upstream
 
 go 1.20
 
