@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.3.0
 // - protoc             v4.23.4
-// source: droneService.proto
+// source: proto/droneService.proto
 
 package dronev1
 
@@ -105,5 +105,5 @@ var DroneService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "droneService.proto",
+	Metadata: "proto/droneService.proto",
 }
