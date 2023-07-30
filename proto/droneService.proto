@@ -6,14 +6,17 @@ option go_package = "./dronev1";
 import "google/protobuf/timestamp.proto";
 
 service DroneService {
-    rpc Movement(MovementRequest) returns (MovementResponse);
+    rpc GetCoordinate(GetCoordinateRequest) returns (GetCoordinateResponse);
+    rpc Movement(MovementRequest) returns (GetCoordinateResponse);
 }
 
 message MovementRequest {
     Movement.Enum movement = 1;
 }
 
-message MovementResponse {
+message GetCoordinateRequest {}
+
+message GetCoordinateResponse {
     Coordinate coordinate = 1;
     google.protobuf.Timestamp time = 2;
 }

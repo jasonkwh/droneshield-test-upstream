@@ -19,14 +19,16 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DroneService_Movement_FullMethodName = "/drone.DroneService/Movement"
+	DroneService_GetCoordinate_FullMethodName = "/drone.DroneService/GetCoordinate"
+	DroneService_Movement_FullMethodName      = "/drone.DroneService/Movement"
 )
 
 // DroneServiceClient is the client API for DroneService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type DroneServiceClient interface {
-	Movement(ctx context.Context, in *MovementRequest, opts ...grpc.CallOption) (*MovementResponse, error)
+	GetCoordinate(ctx context.Context, in *GetCoordinateRequest, opts ...grpc.CallOption) (*GetCoordinateResponse, error)
+	Movement(ctx context.Context, in *MovementRequest, opts ...grpc.CallOption) (*GetCoordinateResponse, error)
 }
 
 type droneServiceClient struct {
@@ -37,8 +39,17 @@ func NewDroneServiceClient(cc grpc.ClientConnInterface) DroneServiceClient {
 	return &droneServiceClient{cc}
 }
 
-func (c *droneServiceClient) Movement(ctx context.Context, in *MovementRequest, opts ...grpc.CallOption) (*MovementResponse, error) {
-	out := new(MovementResponse)
+func (c *droneServiceClient) GetCoordinate(ctx context.Context, in *GetCoordinateRequest, opts ...grpc.CallOption) (*GetCoordinateResponse, error) {
+	out := new(GetCoordinateResponse)
+	err := c.cc.Invoke(ctx, DroneService_GetCoordinate_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *droneServiceClient) Movement(ctx context.Context, in *MovementRequest, opts ...grpc.CallOption) (*GetCoordinateResponse, error) {
+	out := new(GetCoordinateResponse)
 	err := c.cc.Invoke(ctx, DroneService_Movement_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -50,7 +61,8 @@ func (c *droneServiceClient) Movement(ctx context.Context, in *MovementRequest, 
 // All implementations must embed UnimplementedDroneServiceServer
 // for forward compatibility
 type DroneServiceServer interface {
-	Movement(context.Context, *MovementRequest) (*MovementResponse, error)
+	GetCoordinate(context.Context, *GetCoordinateRequest) (*GetCoordinateResponse, error)
+	Movement(context.Context, *MovementRequest) (*GetCoordinateResponse, error)
 	mustEmbedUnimplementedDroneServiceServer()
 }
 
@@ -58,7 +70,10 @@ type DroneServiceServer interface {
 type UnimplementedDroneServiceServer struct {
 }
 
-func (UnimplementedDroneServiceServer) Movement(context.Context, *MovementRequest) (*MovementResponse, error) {
+func (UnimplementedDroneServiceServer) GetCoordinate(context.Context, *GetCoordinateRequest) (*GetCoordinateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetCoordinate not implemented")
+}
+func (UnimplementedDroneServiceServer) Movement(context.Context, *MovementRequest) (*GetCoordinateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Movement not implemented")
 }
 func (UnimplementedDroneServiceServer) mustEmbedUnimplementedDroneServiceServer() {}
@@ -72,6 +87,24 @@ type UnsafeDroneServiceServer interface {
 
 func RegisterDroneServiceServer(s grpc.ServiceRegistrar, srv DroneServiceServer) {
 	s.RegisterService(&DroneService_ServiceDesc, srv)
+}
+
+func _DroneService_GetCoordinate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCoordinateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DroneServiceServer).GetCoordinate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DroneService_GetCoordinate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DroneServiceServer).GetCoordinate(ctx, req.(*GetCoordinateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _DroneService_Movement_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -99,6 +132,10 @@ var DroneService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "drone.DroneService",
 	HandlerType: (*DroneServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetCoordinate",
+			Handler:    _DroneService_GetCoordinate_Handler,
+		},
 		{
 			MethodName: "Movement",
 			Handler:    _DroneService_Movement_Handler,
